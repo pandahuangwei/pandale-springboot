@@ -1,0 +1,49 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+    <id>assembly</id>
+    <formats>
+        <format>dir</format>
+    </formats>
+    <includeBaseDirectory>true</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>*.yml</include>
+                <include>logback-spring.xml</include>
+            </includes>
+            <filtered>true</filtered>
+            <outputDirectory>conf</outputDirectory>
+            <!-- unix文件权限
+            <fileMode>0644</fileMode> -->
+        </fileSet>
+
+        <fileSet>
+            <directory>src/main/assembly/bin</directory>
+            <!-- 过滤文件中的maven变量为maven值 -->
+            <filtered>true</filtered>
+            <fileMode>0755</fileMode>
+           <lineEnding>unix</lineEnding>
+            <includes>
+                <include>*.sh</include>
+            </includes>
+            <outputDirectory>bin</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/assembly/bin</directory>
+            <filtered>true</filtered>
+            <includes>
+                <include>start.bat</include>
+            </includes>
+            <outputDirectory>bin</outputDirectory>
+        </fileSet>
+    </fileSets>
+
+    <dependencySets>
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <outputDirectory>lib</outputDirectory>
+        </dependencySet>
+    </dependencySets>
+</assembly>
