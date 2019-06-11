@@ -2,7 +2,6 @@
 # Build Tools
 
 .gradle
-/build/
 !gradle/wrapper/gradle-wrapper.jar
 
 target/
@@ -27,7 +26,6 @@ target/
 
 ### NetBeans ###
 nbproject/private/
-build/*
 nbbuild/
 dist/
 nbdist/
