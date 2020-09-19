@@ -1,14 +1,5 @@
 package com.pandale.quartz.util;
 
-import java.util.Date;
-import java.util.concurrent.Future;
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.scheduling.quartz.QuartzJobBean;
 import com.pandale.common.constant.Constants;
 import com.pandale.common.constant.ScheduleConstants;
 import com.pandale.common.utils.StringUtils;
@@ -17,25 +8,30 @@ import com.pandale.common.utils.spring.SpringUtils;
 import com.pandale.quartz.domain.SysJob;
 import com.pandale.quartz.domain.SysJobLog;
 import com.pandale.quartz.service.ISysJobLogService;
+import org.quartz.DisallowConcurrentExecution;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.quartz.QuartzJobBean;
+
+import java.util.Date;
+import java.util.concurrent.Future;
 
 /**
  * 定时任务处理
- * 
- * @author panda.
  *
+ * @author panda.
  */
 @DisallowConcurrentExecution
-public class ScheduleJob extends QuartzJobBean
-{
+public class ScheduleJob extends QuartzJobBean {
     private static final Logger log = LoggerFactory.getLogger(ScheduleJob.class);
-
+    private final static ISysJobLogService jobLogService = SpringUtils.getBean(ISysJobLogService.class);
     private ThreadPoolTaskExecutor executor = SpringUtils.getBean("threadPoolTaskExecutor");
 
-    private final static ISysJobLogService jobLogService = SpringUtils.getBean(ISysJobLogService.class);
-
     @Override
-    protected void executeInternal(JobExecutionContext context) throws JobExecutionException
-    {
+    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         SysJob job = new SysJob();
         BeanUtils.copyBeanProp(job, context.getMergedJobDataMap().get(ScheduleConstants.TASK_PROPERTIES));
 
@@ -48,8 +44,7 @@ public class ScheduleJob extends QuartzJobBean
 
         long startTime = System.currentTimeMillis();
 
-        try
-        {
+        try {
             // 执行任务
             log.info("任务开始执行 - 名称：{} 方法：{}", job.getJobName(), job.getMethodName());
             ScheduleRunnable task = new ScheduleRunnable(job.getJobName(), job.getMethodName(), job.getMethodParams());
@@ -61,9 +56,7 @@ public class ScheduleJob extends QuartzJobBean
             jobLog.setJobMessage(job.getJobName() + " 总共耗时：" + times + "毫秒");
 
             log.info("任务执行结束 - 名称：{} 耗时：{} 毫秒", job.getJobName(), times);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             log.info("任务执行失败 - 名称：{} 方法：{}", job.getJobName(), job.getMethodName());
             log.error("任务执行异常  - ：", e);
             long times = System.currentTimeMillis() - startTime;
@@ -71,9 +64,7 @@ public class ScheduleJob extends QuartzJobBean
             // 任务状态 0：成功 1：失败
             jobLog.setStatus(Constants.FAIL);
             jobLog.setExceptionInfo(StringUtils.substring(e.getMessage(), 0, 2000));
-        }
-        finally
-        {
+        } finally {
             jobLogService.addJobLog(jobLog);
         }
     }

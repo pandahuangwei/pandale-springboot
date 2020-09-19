@@ -1,14 +1,15 @@
 package com.pandale.framework.config;
 
-import java.util.HashMap;
-import java.util.Map;
-import javax.servlet.DispatcherType;
+import com.pandale.common.utils.StringUtils;
+import com.pandale.common.xss.XssFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.pandale.common.utils.StringUtils;
-import com.pandale.common.xss.XssFilter;
+
+import javax.servlet.DispatcherType;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Filter配置
@@ -16,8 +17,7 @@ import com.pandale.common.xss.XssFilter;
  * @author panda.
  */
 @Configuration
-public class FilterConfig
-{
+public class FilterConfig {
     @Value("${xss.enabled}")
     private String enabled;
 
@@ -27,10 +27,9 @@ public class FilterConfig
     @Value("${xss.urlPatterns}")
     private String urlPatterns;
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Bean
-    public FilterRegistrationBean xssFilterRegistration()
-    {
+    public FilterRegistrationBean xssFilterRegistration() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setDispatcherTypes(DispatcherType.REQUEST);
         registration.setFilter(new XssFilter());

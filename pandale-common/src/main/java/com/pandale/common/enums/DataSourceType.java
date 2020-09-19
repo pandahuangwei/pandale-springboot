@@ -2,11 +2,10 @@ package com.pandale.common.enums;
 
 /**
  * 数据源
- * 
+ *
  * @author panda.
  */
-public enum DataSourceType
-{
+public enum DataSourceType {
     /**
      * 主库
      */

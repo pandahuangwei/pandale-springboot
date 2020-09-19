@@ -1,34 +1,30 @@
 package com.pandale.admin.web.system;
 
-import java.util.List;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import com.pandale.common.annotation.Log;
 import com.pandale.common.base.AjaxResult;
 import com.pandale.common.enums.BusinessType;
 import com.pandale.common.page.TableDataInfo;
 import com.pandale.common.utils.poi.ExcelUtil;
 import com.pandale.framework.util.ShiroUtils;
+import com.pandale.framework.web.base.BaseController;
 import com.pandale.system.domain.SysPost;
 import com.pandale.system.service.ISysPostService;
-import com.pandale.framework.web.base.BaseController;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 岗位信息操作处理
- * 
+ *
  * @author panda.
  */
 @Controller
 @RequestMapping("/system/post")
-public class SysPostController extends BaseController
-{
+public class SysPostController extends BaseController {
     private String prefix = "system/post";
 
     @Autowired
@@ -36,16 +32,14 @@ public class SysPostController extends BaseController
 
     @RequiresPermissions("system:post:view")
     @GetMapping()
-    public String operlog()
-    {
+    public String operlog() {
         return prefix + "/post";
     }
 
     @RequiresPermissions("system:post:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(SysPost post)
-    {
+    public TableDataInfo list(SysPost post) {
         startPage();
         List<SysPost> list = postService.selectPostList(post);
         return getDataTable(list);
@@ -55,8 +49,7 @@ public class SysPostController extends BaseController
     @RequiresPermissions("system:post:export")
     @PostMapping("/export")
     @ResponseBody
-    public AjaxResult export(SysPost post)
-    {
+    public AjaxResult export(SysPost post) {
         List<SysPost> list = postService.selectPostList(post);
         ExcelUtil<SysPost> util = new ExcelUtil<SysPost>(SysPost.class);
         return util.exportExcel(list, "岗位数据");
@@ -66,14 +59,10 @@ public class SysPostController extends BaseController
     @Log(title = "岗位管理", businessType = BusinessType.DELETE)
     @PostMapping("/remove")
     @ResponseBody
-    public AjaxResult remove(String ids)
-    {
-        try
-        {
+    public AjaxResult remove(String ids) {
+        try {
             return toAjax(postService.deletePostByIds(ids));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return error(e.getMessage());
         }
     }
@@ -82,8 +71,7 @@ public class SysPostController extends BaseController
      * 新增岗位
      */
     @GetMapping("/add")
-    public String add()
-    {
+    public String add() {
         return prefix + "/add";
     }
 
@@ -94,8 +82,7 @@ public class SysPostController extends BaseController
     @Log(title = "岗位管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
-    public AjaxResult addSave(SysPost post)
-    {
+    public AjaxResult addSave(SysPost post) {
         post.setCreateBy(ShiroUtils.getLoginName());
         return toAjax(postService.insertPost(post));
     }
@@ -104,8 +91,7 @@ public class SysPostController extends BaseController
      * 修改岗位
      */
     @GetMapping("/edit/{postId}")
-    public String edit(@PathVariable("postId") Long postId, ModelMap mmap)
-    {
+    public String edit(@PathVariable("postId") Long postId, ModelMap mmap) {
         mmap.put("post", postService.selectPostById(postId));
         return prefix + "/edit";
     }
@@ -117,8 +103,7 @@ public class SysPostController extends BaseController
     @Log(title = "岗位管理", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
-    public AjaxResult editSave(SysPost post)
-    {
+    public AjaxResult editSave(SysPost post) {
         post.setUpdateBy(ShiroUtils.getLoginName());
         return toAjax(postService.updatePost(post));
     }
@@ -128,8 +113,7 @@ public class SysPostController extends BaseController
      */
     @PostMapping("/checkPostNameUnique")
     @ResponseBody
-    public String checkPostNameUnique(SysPost post)
-    {
+    public String checkPostNameUnique(SysPost post) {
         return postService.checkPostNameUnique(post);
     }
 
@@ -138,8 +122,7 @@ public class SysPostController extends BaseController
      */
     @PostMapping("/checkPostCodeUnique")
     @ResponseBody
-    public String checkPostCodeUnique(SysPost post)
-    {
+    public String checkPostCodeUnique(SysPost post) {
         return postService.checkPostCodeUnique(post);
     }
 }
